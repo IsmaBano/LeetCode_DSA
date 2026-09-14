@@ -13,22 +13,24 @@ class Solution {
     public long maxScore(int[] nums) {
         int n=nums.length;
         long ans=0;
-       
-       for(int i=0;i<n;i++){
         long g=0;
         long l=1;
-        for(int j=0;j<n;j++){
-            if(i==j){
-                continue;
-            }
-            g=gcd(g,nums[j]);
-            l=lcm(l,nums[j]);
+    
+        long posl[]=new long[n];
+        long posg[]=new long[n]; 
+        for(int i=n-1;i>=0;i--){
+          g=gcd(g,nums[i]);
+          l=lcm(l,nums[i]);
+          posl[i]=l;
+          posg[i]=g;
         }
-         ans=Math.max(ans,l*g);
-       }
-       long g=0;
-        long l=1;
-        for(int j=0;j<n;j++){
+        ans=Math.max(ans,l*g);
+        g=0;
+        l=1;
+       for(int j=0;j<n-1;j++){
+          long currg=gcd(g,posg[j+1]);
+          long currl=lcm(l,posl[j+1]);
+          ans=Math.max(ans,currg*currl);
             g=gcd(g,nums[j]);
             l=lcm(l,nums[j]);
         }
