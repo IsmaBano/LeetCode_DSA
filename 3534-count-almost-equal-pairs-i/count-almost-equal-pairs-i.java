@@ -1,50 +1,32 @@
 class Solution {
-     public boolean check(int a, int b) {
-
-        String s1 = String.valueOf(a);
-        String s2 = String.valueOf(b);
-
-        int len = Math.max(s1.length(), s2.length());
-
-        // Add leading zeros
-        while (s1.length() < len) {
-            s1 = "0" + s1;
-        }
-
-        while (s2.length() < len) {
-            s2 = "0" + s2;
-        }
-
-        int diff = 0;
-        int first1 = -1, first2 = -1;
-        int second1 = -1, second2 = -1;
-
-        for (int i = 0; i < len; i++) {
-
-            if (s1.charAt(i) != s2.charAt(i)) {
-
+    public boolean check(int a,int b){
+        int  diff=0;
+       List<Integer> a1=new ArrayList<>();
+       List<Integer> b1=new ArrayList<>();
+        while(a>0 || b>0){
+            int d1=a%10;
+            int d2=b%10;
+            a=a/10;
+            b=b/10;  
+            if(d1!=d2){
                 diff++;
-
-                if (diff == 1) {
-                    first1 = s1.charAt(i);
-                    first2 = s2.charAt(i);
-                } 
-                else if (diff == 2) {
-                    second1 = s1.charAt(i);
-                    second2 = s2.charAt(i);
-                } 
-                else {
-                    return false;
-                }
+                a1.add(d1);
+                b1.add(d2);
+            }
+            if(diff>2){
+                return false;
             }
         }
-
-        // Already equal
-        if (diff == 0) {
+        if(diff==0){
             return true;
         }
-
-        return first1 == second2 && first2 == second1;
+        if(diff==1){
+            return false;
+        }
+        if(a1.get(0)==b1.get(1) && a1.get(1)==b1.get(0)){
+            return true;
+        }
+        return false;
     }
     public int countPairs(int[] nums) {
         int n=nums.length;
