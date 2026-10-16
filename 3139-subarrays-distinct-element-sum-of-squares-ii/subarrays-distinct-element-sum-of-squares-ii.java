@@ -1,97 +1,60 @@
-// class Solution {
-//     int seg1[];
-//     int seg2[];
-//     int lazy[];
-//     public void add(int i,int l,int r,int ql,int qr){
-       
-//     }
-//     public int sumCounts(int[] nums) {
-//         //ending at i
-//         int n=nums.length;
-//         seg1=new int[4*n];
-//         seg2=new int[4*n]; 
-//         int ans=0;
-//         HashMap<Integer,Integer> map=new HashMap<>(); 
-//         for(int i=0;i<n;i++){
-//            int t=map.getOrDefault(nums[i],-);
-//            add(0,0,n-1,t+1,i);
-//           map.put(nums[i],i);
-//         }
-//         return ans;
-//     }
-// }Karte hai kal 
 class Solution {
-    static final long MOD = 1000000007L;
-    int n;
-
-    long[] sqSumSegTree;
-    long[] sumSegTree;
-    long[] lazyTree;
-
-    void lazyAddition(int i, int l, int r, long val) {
-        long len = r - l + 1;
-
-        sqSumSegTree[i] += 2 * val * sumSegTree[i] + len * val * val;
-        sumSegTree[i] += len * val;
-    }
-
-    void updateRange(int start, int end, int i, int l, int r, long val) {
-        if (lazyTree[i] != 0) {
-            lazyAddition(i, l, r, lazyTree[i]);
-
-            if (l != r) {
-                lazyTree[2 * i + 1] += lazyTree[i];
-                lazyTree[2 * i + 2] += lazyTree[i];
-            }
-            lazyTree[i] = 0;
-        }
-
-        // out of range
-        if (l > end || r < start || l > r) {
+    long mod=(long)(1e9)+7;
+    long seg1[];
+    long seg2[];
+    long lazy[];
+    public void lazyadd(int i,int l,int r,long val){
+        if(val==0){
             return;
         }
-
-        // completely within range
-        if (l >= start && r <= end) {
-            lazyAddition(i, l, r, val);
-
-            if (l != r) {
-                lazyTree[2 * i + 1] += val;
-                lazyTree[2 * i + 2] += val;
-            }
-            return;
-        }
-
-        int mid = l + (r - l) / 2;
-        updateRange(start, end, 2 * i + 1, l, mid, val);
-        updateRange(start, end, 2 * i + 2, mid + 1, r, val);
-
-        sumSegTree[i] = sumSegTree[2 * i + 1] + sumSegTree[2 * i + 2];
-        sqSumSegTree[i] = sqSumSegTree[2 * i + 1] + sqSumSegTree[2 * i + 2];
+        long len=(r-l+1);
+        
+        seg2[i]=(seg2[i]+(len*val*val%mod+2*seg1[i]*val%mod)%mod)%mod;
+        seg1[i]=(seg1[i]+len*val)%mod;
     }
+    public void add(int i,int l,int r,int ql,int qr){
+         if(lazy[i]>0){
+        lazyadd(i,l,r,lazy[i]);
+       if(l!=r){
+        lazy[2*i+1]+=lazy[i];
+        lazy[2*i+2]+=lazy[i];
+       }
+        lazy[i]=0;
+       }
 
+
+       if(l>qr ||r<ql){
+        return;
+       }
+       if(l>=ql && r<=qr){
+        lazyadd(i,l,r,1);
+        if(l!=r){
+        lazy[2*i+1]+=1;
+        lazy[2*i+2]+=1;
+       }
+        return;
+       }
+        int mid=(l+r)/2;
+        add(2*i+1,l,mid,ql,qr);
+        add(2*i+2,mid+1,r,ql,qr);
+        seg1[i]=(seg1[2*i+1]+seg1[2*i+2])%mod;
+        seg2[i]=(seg2[2*i+1]+seg2[2*i+2])%mod;
+    }
     public int sumCounts(int[] nums) {
-        n = nums.length;
-
-        sqSumSegTree = new long[4 * n];
-        sumSegTree = new long[4 * n];
-        lazyTree = new long[4 * n];
-
-        int[] lastSeenIdx = new int[100001];
-         Arrays.fill(lastSeenIdx, -1);
-        long result = 0;
-
-        for (int i = 0; i < n; i++) {
-            int start = lastSeenIdx[nums[i]] + 1;
-            int end = i;
-
-            updateRange(start, end, 0, 0, n - 1, 1);
-
-            result = (result + sqSumSegTree[0]) % MOD;
-
-            lastSeenIdx[nums[i]] = i;
+        //ending at i
+        int n=nums.length;
+        seg1=new long[4*n];
+        seg2=new long[4*n]; 
+        lazy=new long[4*n];
+        long ans=0;
+        HashMap<Integer,Integer> map=new HashMap<>(); 
+        for(int i=0;i<n;i++){
+           int t=map.getOrDefault(nums[i],-1);
+           add(0,0,n-1,t+1,i);
+           ans=(ans+seg2[0])%mod;
+           System.out.println(seg2[0]);
+          map.put(nums[i],i);
         }
-
-        return (int) result;
+        return (int)ans;
     }
 }
