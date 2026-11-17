@@ -27,7 +27,7 @@ class Solution {
         if(map.containsKey(left)){
             int len=i-map.get(left);
             list.add(new int[]{i,len});
-            System.out.println(i+" "+len);
+            // System.out.println(i+" "+len);
         }
         map.put(sum,i);
        }
